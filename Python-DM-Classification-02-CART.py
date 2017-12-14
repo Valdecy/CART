@@ -72,9 +72,9 @@ def prediction_dt_cart(model, Xdata):
                 one_hot_data = pd.DataFrame({str(col_name) + "[" + str(new_col[k]) + "]": data.iloc[:, 1]})
                 for L in range (0, one_hot_data.shape[0]):
                     if one_hot_data.iloc[L, 0] == new_col[k]:
-                        one_hot_data.iloc[L, 0] = "1 "
+                        one_hot_data.iloc[L, 0] = " 1 "
                     else:
-                        one_hot_data.iloc[L, 0] = "0 "
+                        one_hot_data.iloc[L, 0] = " 0 "
                 data = pd.concat([data, one_hot_data.astype(np.int32)], axis = 1)
             data.drop(col_name, axis = 1, inplace = True)
             end_count = data.shape[1]
@@ -224,9 +224,9 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 one_hot_data = pd.DataFrame({str(col_name) + "[" + str(new_col[k]) + "]": dataset.iloc[:, 1]})
                 for L in range (0, one_hot_data.shape[0]):
                     if one_hot_data.iloc[L, 0] == new_col[k]:
-                        one_hot_data.iloc[L, 0] = "1 "
+                        one_hot_data.iloc[L, 0] = " 1 "
                     else:
-                        one_hot_data.iloc[L, 0] = "0 "
+                        one_hot_data.iloc[L, 0] = " 0 "
                 dataset = pd.concat([dataset, one_hot_data.astype(np.int32)], axis = 1)
             dataset.drop(col_name, axis = 1, inplace = True)
             end_count = dataset.shape[1]
@@ -252,13 +252,13 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     branch = [None]*1
     branch[0] = dataset
     gini_vector = np.empty([1, branch[i].shape[1]])
-    lower = "0"
+    lower = " 0 "
     root_index = 0
     rule = [None]*1
     rule[0] = "IF "
     skip_update = False
     stop = 2
-    upper = "1"
+    upper = " 1 "
     
     ################     Part 3 - CART Algorithm    #############################
     # CART - Algorithm
