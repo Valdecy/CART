@@ -1,0 +1,15 @@
+Outlook;Temperature;Humidity;Windy;Play
+Sunny;85;85;0;No
+Sunny;80;90;1;No
+Overcast;83;86;0;Yes
+Rainy;70;96;0;Yes
+Rainy;68;80;0;Yes
+Rainy;65;70;1;No
+Overcast;64;65;1;Yes
+Sunny;72;95;0;No
+Sunny;69;70;0;Yes
+Rainy;75;80;0;Yes
+Sunny;75;70;1;Yes
+Overcast;72;90;1;Yes
+Overcast;81;75;0;Yes
+Rainy;71;91;1;No
