@@ -59,7 +59,7 @@ def prediction_dt_cart(model, Xdata):
         if data.iloc[:,j].dtype == "bool":
             data.iloc[:,j] = data.iloc[:, j].astype(str)
     dt_model = model[:]
-        # Preprocessing - One Hot Encode
+  
     count = 0
     end_count = data.shape[1]
     while (count < end_count-1):
