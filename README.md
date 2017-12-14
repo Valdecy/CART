@@ -1,4 +1,4 @@
- #CART (Classification And Regression Trees)
+# CART (Classification And Regression Trees)
 
 CART Algorithm function with the Gini Index measure for numerical data. Categorical data is handled by a one-hot encoding transformation, creating in this way, a dummy variable for each category hence the binary splits can always occur. The function returns: 1) The decision tree rules. 2) The total number of rules.
 
