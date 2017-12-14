@@ -353,13 +353,10 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
 
 ######################## Part 4 - Usage ####################################
 
-df = pd.read_csv('Python-DM-Classification-02-CARTb.csv', sep = ';')
+df = pd.read_csv('Python-DM-Classification-02-CART.csv', sep = ';')
 
 X = df.iloc[:, 0:4]
 y = df.iloc[:, 4]
-
-Xdata = df.iloc[:, 0:4]
-ydata = df.iloc[:, 4]
 
 dt_model = dt_cart(X, y)
 
