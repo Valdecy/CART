@@ -305,6 +305,8 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                  if "." not in rule[i]:
                      rule[i] = rule[i] + " THEN " + name + " = " + branch[i].iloc[0, 0] + "."
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
+                     if i == 1:
+                         rule[i] = rule[i].replace(".", "")
                  skip_update = True
                  break
             if i > 0 and is_number(dataset.iloc[:, element]) == False and pre_pruning == "chi_2" and chi_squared_test(branch[i].iloc[:, 0], branch[i].iloc[:, element]) > chi_lim:
@@ -369,7 +371,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     for i in range(len(rule) - 1, -1, -1):
         if rule[i].endswith(".") == False:
             del rule[i]    
-    rule = list(set(rule))
+    #rule = list(set(rule))
     
     rule.append("Total Number of Rules: " + str(len(rule)))
     rule.append(dataset.agg(lambda x:x.value_counts().index[0])[0])
