@@ -372,7 +372,6 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     for i in range(len(rule) - 1, -1, -1):
         if rule[i].endswith(".") == False:
             del rule[i]    
-    #rule = list(set(rule))
     
     rule.append("Total Number of Rules: " + str(len(rule)))
     rule.append(dataset.agg(lambda x:x.value_counts().index[0])[0])
