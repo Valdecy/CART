@@ -128,14 +128,14 @@ def prediction_dt_cart(model, Xdata):
                         k = len(rule[j])
                 elif is_number_value(data[rule[j][k]][i]) == True:
                      if rule[j][k+1].find("<=") == 0:
-                         if data[rule[j][k]][i] <= float(rule[j][k+1].replace("<=", "")): 
+                         if float(data[rule[j][k]][i]) <= float(rule[j][k+1].replace("<=", "")): 
                              rule_count = rule_count + 1
                              if (rule_count == rule_confirmation):
                                  data.iloc[i,0] = rule[j][len(rule[j]) - 1]
                          else:
                              k = len(rule[j])
                      elif rule[j][k+1].find(">") == 0:
-                         if data[rule[j][k]][i] > float(rule[j][k+1].replace(">", "")): 
+                         if float(data[rule[j][k]][i]) > float(rule[j][k+1].replace(">", "")): 
                              rule_count = rule_count + 1
                              if (rule_count == rule_confirmation):
                                  data.iloc[i,0] = rule[j][len(rule[j]) - 1]
@@ -345,7 +345,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
             root_index = np.argmin(gini_vector)
             rule[i] = rule[i] + list(branch[i])[root_index]          
             for word in range(0, len(uniqueWords[root_index])):
-                uw = uniqueWords[root_index][word].replace("<=", "")
+                uw = str(uniqueWords[root_index][word]).replace("<=", "")
                 uw = uw.replace(">", "")
                 lower = "<=" + uw
                 upper = ">" + uw
@@ -356,7 +356,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 else:
                     branch.append(branch[i][branch[i].iloc[:, root_index] == uniqueWords[root_index][word]])
                 node = uniqueWords[root_index][word]
-                rule.append(rule[i] + " = " + "{" + node + "}")            
+                rule.append(rule[i] + " = " + "{" +  str(node) + "}")            
             for logic_connection in range(1, len(rule)):
                 if len(np.unique(branch[i][0])) != 1 and rule[logic_connection].endswith(" AND ") == False  and rule[logic_connection].endswith("}") == True:
                     rule[logic_connection] = rule[logic_connection] + " AND "
@@ -369,7 +369,8 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     for i in range(len(rule) - 1, -1, -1):
         if rule[i].endswith(".") == False:
             del rule[i]    
-
+    rule = list(set(rule))
+    
     rule.append("Total Number of Rules: " + str(len(rule)))
     rule.append(dataset.agg(lambda x:x.value_counts().index[0])[0])
     
