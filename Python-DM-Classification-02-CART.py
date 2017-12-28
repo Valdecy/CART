@@ -349,9 +349,9 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 uw = uw.replace(">", "")
                 lower = "<=" + uw
                 upper = ">" + uw
-                if uniqueWords[root_index][word] == lower:
+                if uniqueWords[root_index][word] == lower and bin_names[root_index] != "binary":
                     branch.append(branch[i][branch[i].iloc[:, root_index] <= float(uw)])
-                elif uniqueWords[root_index][word] == upper:
+                elif uniqueWords[root_index][word] == upper and bin_names[root_index] != "binary":
                     branch.append(branch[i][branch[i].iloc[:, root_index]  > float(uw)])
                 else:
                     branch.append(branch[i][branch[i].iloc[:, root_index] == uniqueWords[root_index][word]])
