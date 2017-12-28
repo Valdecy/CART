@@ -16,6 +16,7 @@ import pandas as pd
 import numpy  as np
 from random import randint
 from scipy import stats
+from copy import deepcopy
 
 # Function: Returns True, if a Column is Numeric
 def is_number(string):
@@ -58,8 +59,9 @@ def prediction_dt_cart(model, Xdata):
     for j in range(0, data.shape[1]):
         if data.iloc[:,j].dtype == "bool":
             data.iloc[:,j] = data.iloc[:, j].astype(str)
-    dt_model = model[:]
-  
+    
+    dt_model = deepcopy(model)
+
     count = 0
     end_count = data.shape[1]
     while (count < end_count-1):
@@ -78,6 +80,20 @@ def prediction_dt_cart(model, Xdata):
                 data = pd.concat([data, one_hot_data.astype(np.int32)], axis = 1)
             data.drop(col_name, axis = 1, inplace = True)
             end_count = data.shape[1]
+        else:
+            col_name = data.iloc[:, 1].name
+            one_hot_data = data.iloc[:, 1]
+            data.drop(col_name, axis = 1, inplace = True)
+            data = pd.concat([data, one_hot_data], axis = 1)
+
+    # Preprocessing - Binary Values
+    for i in range(0, data.shape[0]):
+        for j in range(1, data.shape[1]):
+            if data.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
+               if data.iloc[i,j] == 0:
+                   data.iloc[i,j] = str(0)
+               else:
+                   data.iloc[i,j] = str(1)
     
     for i in range(0, len(dt_model)):
         dt_model[i] = dt_model[i].replace("{", "")
@@ -225,11 +241,28 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 for L in range (0, one_hot_data.shape[0]):
                     if one_hot_data.iloc[L, 0] == new_col[k]:
                         one_hot_data.iloc[L, 0] = " 1 "
-                    else:
+                    else: 
                         one_hot_data.iloc[L, 0] = " 0 "
                 dataset = pd.concat([dataset, one_hot_data.astype(np.int32)], axis = 1)
             dataset.drop(col_name, axis = 1, inplace = True)
             end_count = dataset.shape[1]
+        else:
+            col_name = dataset.iloc[:, 1].name
+            one_hot_data = dataset.iloc[:, 1]
+            dataset.drop(col_name, axis = 1, inplace = True)
+            dataset = pd.concat([dataset, one_hot_data], axis = 1)
+    
+    bin_names = list(dataset)
+     
+    # Preprocessing - Binary Values
+    for i in range(0, dataset.shape[0]):
+        for j in range(1, dataset.shape[1]):
+            if dataset.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
+               bin_names[j] = "binary"
+               if dataset.iloc[i,j] == 0:
+                   dataset.iloc[i,j] = str(0)
+               else:
+                   dataset.iloc[i,j] = str(1)
                 
     # Preprocessing - Unique Words List
     unique = []
@@ -280,7 +313,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
                  skip_update = True
                  continue
-            if is_number(dataset.iloc[:, element]) == True:
+            if is_number(dataset.iloc[:, element]) == True and bin_names[element] != "binary":
                 gini_vector[0, element] = 1.0
                 value = np.sort(branch[i].iloc[:, element].unique())
                 skip_update = False
@@ -296,7 +329,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                     if g_index < float(gini_vector[0, element]):
                         gini_vector[0, element] = g_index
                         uniqueWords[element] = bin_sample[1]
-            if is_number(dataset.iloc[:, element]) == False:
+            if (is_number(dataset.iloc[:, element]) == False or bin_names[element] == "binary"):
                 gini_vector[0, element] = 1.0
                 skip_update = False
                 g_index = gini_index(target = branch[i].iloc[:, 0], feature =  pd.DataFrame(branch[i].iloc[:, element].values.reshape((branch[i].iloc[:, element].shape[0], 1))), uniques = uniqueWords[element])
@@ -322,14 +355,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                     branch.append(branch[i][branch[i].iloc[:, root_index]  > float(uw)])
                 else:
                     branch.append(branch[i][branch[i].iloc[:, root_index] == uniqueWords[root_index][word]])
-                if (len(uniqueWords[root_index])==2 and uniqueWords[root_index][0] == "<=0" and uniqueWords[root_index][1] == ">0"):
-                    node = uniqueWords[root_index][word].replace("<=0", " 0 ")
-                    node = node.replace(">0" , " 1 ")
-                elif(len(uniqueWords[root_index])==2 and uniqueWords[root_index][0] == ">0" and uniqueWords[root_index][1] == "<=0"):
-                    node = uniqueWords[root_index][word].replace("<=0", " 0 ")
-                    node = node.replace(">0" , " 1 ")
-                else:
-                    node = uniqueWords[root_index][word]
+                node = uniqueWords[root_index][word]
                 rule.append(rule[i] + " = " + "{" + node + "}")            
             for logic_connection in range(1, len(rule)):
                 if len(np.unique(branch[i][0])) != 1 and rule[logic_connection].endswith(" AND ") == False  and rule[logic_connection].endswith("}") == True:
