@@ -306,7 +306,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                  if "." not in rule[i]:
                      rule[i] = rule[i] + " THEN " + name + " = " + branch[i].iloc[0, 0] + "."
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
-                     if i == 1 and bin_names[element] == "binary":
+                     if i == 1 and (rule[i].find("{0}") != -1 or rule[i].find("{1}")!= -1):
                          rule[i] = rule[i].replace(".", "")
                  skip_update = True
                  break
