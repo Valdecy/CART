@@ -318,7 +318,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                  continue
             if is_number(dataset.iloc[:, element]) == True and bin_names[element] != "binary":
                 gini_vector[0, element] = 1.0
-                value = np.sort(branch[i].iloc[:, element].unique())
+                value = branch[i].iloc[:, element].unique()
                 skip_update = False
                 for bin_split in range(0, len(value)):
                     bin_sample = split_me(feature = branch[i].iloc[:, element], split = value[bin_split])
