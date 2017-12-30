@@ -156,7 +156,7 @@ def gini_index(target, feature = [], uniques = []):
     denominator_1 = feature.count()
     data = pd.concat([pd.DataFrame(target.values.reshape((target.shape[0], 1))), feature], axis = 1)
     for word in range(0, len(uniques)):
-        denominator_2 = feature[(feature == uniques[word])].count() #12
+        denominator_2 = feature[(feature == uniques[word])].count()
         if denominator_2[0] > 0:
             for lbl in range(0, len(np.unique(target))):
                 numerator_1 = data.iloc[:,0][(data.iloc[:,0] == np.unique(target)[lbl]) & (data.iloc[:,1]  == uniques[word])].count()
