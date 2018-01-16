@@ -1,6 +1,6 @@
 # CART (Classification And Regression Trees)
 
-CART Algorithm uses the Gini Index measure to analyse numerical data. Categorical data is handled by a one-hot encoding transformation, creating in this way, a dummy variable for each category. This guarantees that the binary splits will always occurs. The function returns: 1) The decision tree rules. 2) The total number of rules.
+CART Algorithm uses the Gini Index measure to analyse numerical data. Categorical data is handled by a one-hot encoding transformation, creating in this way, a dummy variable for each category. This guarantees that the binary splits will always occur. The function returns: 1) The decision tree rules. 2) The total number of rules.
 
 * Xdata = Dataset Attributes
 
