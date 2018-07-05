@@ -57,10 +57,21 @@ def prediction_dt_cart(model, Xdata):
     ydata = pd.DataFrame(index=range(0, Xdata.shape[0]), columns=["Prediction"])
     data  = pd.concat([ydata, Xdata], axis = 1)
     rule = []
+    
+    # Preprocessing - Binary Values
+    for j in range(0, data.shape[1]):
+        if data.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
+            for i in range(0, data.shape[0]):          
+               if data.iloc[i,j] == 0:
+                   data.iloc[i,j] = False
+               else:
+                   data.iloc[i,j] = True
+    
+    # Preprocessing - Boolean
     for j in range(0, data.shape[1]):
         if data.iloc[:,j].dtype == "bool":
             data.iloc[:,j] = data.iloc[:, j].astype(str)
-    
+   
     dt_model = deepcopy(model)
 
     count = 0
@@ -156,7 +167,7 @@ def gini_index(target, feature = [], uniques = []):
     denominator_1 = feature.count()
     data = pd.concat([pd.DataFrame(target.values.reshape((target.shape[0], 1))), feature], axis = 1)
     for word in range(0, len(uniques)):
-        denominator_2 = feature[(feature == uniques[word])].count()
+        denominator_2 = feature[(feature == uniques[word])].count() #12
         if denominator_2[0] > 0:
             for lbl in range(0, len(np.unique(target))):
                 numerator_1 = data.iloc[:,0][(data.iloc[:,0] == np.unique(target)[lbl]) & (data.iloc[:,1]  == uniques[word])].count()
@@ -191,6 +202,15 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     name = ydata.name
     ydata = pd.DataFrame(ydata.values.reshape((ydata.shape[0], 1)))
     dataset = pd.concat([ydata, Xdata], axis = 1)
+    
+    # Preprocessing - Binary Values
+    for j in range(0, dataset.shape[1]):
+        if dataset.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
+            for i in range(0, dataset.shape[0]):          
+               if dataset.iloc[i,j] == 0:
+                   dataset.iloc[i,j] = False
+               else:
+                   dataset.iloc[i,j] = True
     
      # Preprocessing - Boolean Values
     for j in range(0, dataset.shape[1]):
@@ -372,6 +392,7 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     for i in range(len(rule) - 1, -1, -1):
         if rule[i].endswith(".") == False:
             del rule[i]    
+    #rule = list(set(rule))
     
     rule.append("Total Number of Rules: " + str(len(rule)))
     rule.append(dataset.agg(lambda x:x.value_counts().index[0])[0])
