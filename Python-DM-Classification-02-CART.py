@@ -58,15 +58,6 @@ def prediction_dt_cart(model, Xdata):
     data  = pd.concat([ydata, Xdata], axis = 1)
     rule = []
     
-    # Preprocessing - Binary Values
-    for j in range(0, data.shape[1]):
-        if data.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
-            for i in range(0, data.shape[0]):          
-               if data.iloc[i,j] == 0:
-                   data.iloc[i,j] = False
-               else:
-                   data.iloc[i,j] = True
-    
     # Preprocessing - Boolean
     for j in range(0, data.shape[1]):
         if data.iloc[:,j].dtype == "bool":
@@ -201,16 +192,14 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
     # Preprocessing - Creating Dataframe
     name = ydata.name
     ydata = pd.DataFrame(ydata.values.reshape((ydata.shape[0], 1)))
-    dataset = pd.concat([ydata, Xdata], axis = 1)
-    
-    # Preprocessing - Binary Values
-    for j in range(0, dataset.shape[1]):
-        if dataset.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
-            for i in range(0, dataset.shape[0]):          
-               if dataset.iloc[i,j] == 0:
-                   dataset.iloc[i,j] = False
+    for j in range(0, ydata.shape[1]):
+        if ydata.iloc[:,j].dropna().value_counts().index.isin([0,1]).all():
+            for i in range(0, ydata.shape[0]):          
+               if ydata.iloc[i,j] == 0:
+                   ydata.iloc[i,j] = "zero"
                else:
-                   dataset.iloc[i,j] = True
+                   ydata.iloc[i,j] = "one"
+    dataset = pd.concat([ydata, Xdata], axis = 1)
     
      # Preprocessing - Boolean Values
     for j in range(0, dataset.shape[1]):
