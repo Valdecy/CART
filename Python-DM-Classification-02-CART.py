@@ -101,7 +101,7 @@ def prediction_dt_cart(model, Xdata):
     for i in range(0, len(dt_model)):
         dt_model[i] = dt_model[i].replace("{", "")
         dt_model[i] = dt_model[i].replace("}", "")
-        dt_model[i] = dt_model[i].replace(".", "")
+        dt_model[i] = dt_model[i].replace(";", "")
         dt_model[i] = dt_model[i].replace("IF ", "")
         dt_model[i] = dt_model[i].replace("AND", "")
         dt_model[i] = dt_model[i].replace("THEN", "")
@@ -312,16 +312,16 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 skip_update = True 
                 break
             if len(np.unique(branch[i][0])) == 1 or len(branch[i]) == 1:
-                 if "." not in rule[i]:
-                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].iloc[0, 0] + "."
+                 if ";" not in rule[i]:
+                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].iloc[0, 0] + ""
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
                      if i == 1 and (rule[i].find("{0}") != -1 or rule[i].find("{1}")!= -1):
-                         rule[i] = rule[i].replace(".", "")
+                         rule[i] = rule[i].replace(";", "")
                  skip_update = True
                  break
             if i > 0 and is_number(dataset.iloc[:, element]) == False and pre_pruning == "chi_2" and chi_squared_test(branch[i].iloc[:, 0], branch[i].iloc[:, element]) > chi_lim:
-                 if "." not in rule[i]:
-                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + "."
+                 if ";" not in rule[i]:
+                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + ";"
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
                  skip_update = True
                  continue
@@ -332,8 +332,8 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 for bin_split in range(0, len(value)):
                     bin_sample = split_me(feature = branch[i].iloc[:, element], split = value[bin_split])
                     if i > 0 and pre_pruning == "chi_2" and chi_squared_test(branch[i].iloc[:, 0], bin_sample[0]) > chi_lim:
-                        if "." not in rule[i]:
-                             rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + "."
+                        if ";" not in rule[i]:
+                             rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + ";"
                              rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
                         skip_update = True
                         continue
@@ -347,8 +347,8 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
                 g_index = gini_index(target = branch[i].iloc[:, 0], feature =  pd.DataFrame(branch[i].iloc[:, element].values.reshape((branch[i].iloc[:, element].shape[0], 1))), uniques = uniqueWords[element])
                 gini_vector[0, element] = g_index
             if i > 0 and pre_pruning == "min" and len(branch[i]) <= min_lim:
-                 if "." not in rule[i]:
-                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + "."
+                 if ";" not in rule[i]:
+                     rule[i] = rule[i] + " THEN " + name + " = " + branch[i].agg(lambda x:x.value_counts().index[0])[0] + ";"
                      rule[i] = rule[i].replace(" AND  THEN ", " THEN ")
                  skip_update = True
                  continue
@@ -379,9 +379,8 @@ def dt_cart(Xdata, ydata, cat_missing = "none", num_missing = "none", pre_prunin
         stop = len(rule)
     
     for i in range(len(rule) - 1, -1, -1):
-        if rule[i].endswith(".") == False:
+        if rule[i].endswith(";") == False:
             del rule[i]    
-    #rule = list(set(rule))
     
     rule.append("Total Number of Rules: " + str(len(rule)))
     rule.append(dataset.agg(lambda x:x.value_counts().index[0])[0])
